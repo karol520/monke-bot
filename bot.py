@@ -23,11 +23,11 @@ async def on_ready():
 
 @client.command(brief= "best boysband evr 2 gec")
 async def gec(ctx):
-    await ctx.channel.send(file=discord.File("C:/Users/Karol/Downloads/monke bot 2.0/gec.webm"))
+    await ctx.channel.send(file=discord.File("gec.webm"))
 
 @client.command(brief= "monkemusic")
 async def monkemusic(ctx):
-    await ctx.channel.send(file=discord.File("C:/Users/Karol/Downloads/monke bot 2.0/monkeymusic.webm"))
+    await ctx.channel.send(file=discord.File("monkeymusic.webm"))
 
 @client.command(brief= "cock and balls")
 async def cbt(ctx):
@@ -132,7 +132,7 @@ async def fart(ctx):
     channel = ctx.author.voice.channel
     if channel != None:
         vc = await channel.connect()
-        vc.play(discord.FFmpegPCMAudio(executable="C:/Users/Karol/Downloads/monke bot 2.0/FFmpeg/bin/ffmpeg.exe", source="C:/Users/Karol/Downloads/monke bot 2.0/fart.mp3"))
+        vc.play(discord.FFmpegPCMAudio(executable="bin/ffmpeg.exe", source="fart.mp3"))
         while vc.is_playing():
             time.sleep(.1)
         await vc.disconnect()
