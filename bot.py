@@ -1,4 +1,4 @@
-﻿import discord, random, asyncio, os, time
+import discord, random, asyncio, os, time
 from discord import voice_client
 from discord import message
 from discord import user
