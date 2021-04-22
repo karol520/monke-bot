@@ -19,7 +19,7 @@ client = commands.Bot(command_prefix = prefix)
 @client.event
 async def on_ready():
     print("{0.user} has awoken from his slumber 🐒".format(client))
-    await client.change_presence(status=discord.Status.online, activity=discord.Game(f"now with more potassium!\nuse .help for help"))
+    await client.change_presence(status=discord.Status.online, activity=discord.Game("🐵🍌🧠 | use .help"))
 
 @client.command(brief= "best boysband evr 2 gec")
 async def gec(ctx):
