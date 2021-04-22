@@ -20,6 +20,9 @@ client = commands.Bot(command_prefix = prefix)
 async def on_ready():
     print("{0.user} has awoken from his slumber 🐒".format(client))
     await client.change_presence(status=discord.Status.online, activity=discord.Game("🐵🍌🧠 | use .help"))
+    user = await client.fetch_user('269896500790820866')
+    channel = await user.create_dm()
+    await channel.send("I'm alive, unfortunately.")
 
 @client.command(brief= "best boysband evr 2 gec")
 async def gec(ctx):
