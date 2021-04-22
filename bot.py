@@ -12,7 +12,7 @@ from vars import furryshit
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 
-prefix = "'"
+prefix = "."
 client = commands.Bot(command_prefix = prefix)
 
 
