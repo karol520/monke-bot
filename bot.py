@@ -7,7 +7,7 @@ from discord.ext import commands, tasks
 from discord.ext.commands import Bot
 from discord.voice_client import VoiceClient
 from dotenv import load_dotenv
-from vars import furryshit
+from vars import facts, furryshit
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -168,7 +168,6 @@ async def clear(ctx,amount=1):
 
 @client.command(brief="very cool random fact")
 async def randomfact(ctx):
-    facts =["kutas", "kutas2", "kutas 3"]
     await ctx.send(str(facts[random.randint(0,len(facts)-1)]))
 
 client.run(TOKEN)
