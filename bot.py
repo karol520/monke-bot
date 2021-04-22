@@ -12,14 +12,14 @@ from vars import furryshit
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 
-prefix = ";"
+prefix = "'"
 client = commands.Bot(command_prefix = prefix)
 
 
 @client.event
 async def on_ready():
     print("{0.user} has awoken from his slumber 🐒".format(client))
-    await client.change_presence(status=discord.Status.online, activity=discord.Game(f"mukey, use {prefix}help\nyou moron"))
+    await client.change_presence(status=discord.Status.online, activity=discord.Game(f"now with more potassium!\nuse .help for help"))
 
 @client.command(brief= "best boysband evr 2 gec")
 async def gec(ctx):
@@ -41,7 +41,7 @@ async def whoami(ctx):
 async def omba(ctx):
     await ctx.channel.send("https://tenor.com/view/omba-crazy-boss-cats-kittens-gif-16828150")
 
-@client.command(brief= "ping")
+@client.command(brief= ";)")
 async def ping(ctx):
     if ctx.message.author == client.user:
         return
@@ -127,7 +127,7 @@ async def id(ctx):
         embed.set_footer(text="ID: "+str(ctx.message.author.id))
         await ctx.send(embed=embed)
  
-@client.command(brief="fart", pass_context=True)
+@client.command(brief="farts", pass_context=True)
 async def fart(ctx):
     channel = ctx.author.voice.channel
     if channel != None:
@@ -166,7 +166,7 @@ async def clear(ctx,amount=1):
     else:
         await ctx.channel.send("too many messages, fuck off")
 
-@client.command(brief="random fact")
+@client.command(brief="very cool random fact")
 async def randomfact(ctx):
     facts =["kutas", "kutas2", "kutas 3"]
     await ctx.send(str(facts[random.randint(0,len(facts)-1)]))
