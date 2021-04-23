@@ -3,6 +3,7 @@ from discord import voice_client
 from discord import message
 from discord import user
 from discord import FFmpegPCMAudio
+from discord.utils import get
 from discord.ext import commands, tasks
 from discord.ext.commands import Bot
 from discord.voice_client import VoiceClient
@@ -122,7 +123,32 @@ async def randomfact(ctx):
 
 @bot.command(brief="says when someone joined the server")
 async def joined(ctx, member: discord.Member):
-    await ctx.send(f"{member.name} joined in {member.joined_at}")
+    await ctx.send(f"{member.name} joined at {member.joined_at}")
+
+@bot.command(brief="creates a poll, use .poll <question> <timer>")
+async def poll(ctx, message=None, timer=None):
+    if message == None or timer == None:
+        await ctx.send("please specify your question and timer")
+        return
+    try:
+        check = int(timer)
+    except:
+        await ctx.send("timer is not a valid number")  
+        return      
+    embed = discord.Embed(title="Poll", description=f"{message}", colour=discord.Color.dark_gray())
+    message = await ctx.send(embed=embed )
+    await message.add_reaction("👍")
+    await message.add_reaction("👎")
+    time = int(timer)
+    await asyncio.sleep(time)
+    message= await ctx.fetch_message(message.id)
+    reaction = get(message.reactions, emoji="👍")
+    num_reactions = reaction.count - 1
+    reaction2 = get(message.reactions, emoji="👎")
+    num_reactions2 = reaction2.count - 1
+    results = discord.Embed(title="Results", description=f"👍 votes: {num_reactions}\n\n👎 votes: {num_reactions2}", colour=discord.Color.red())
+    await ctx.send(embed=results)
+
 
 @bot.command(brief=f"types munke forever ({prefix}munke stop to stop)")
 async def munke(ctx, enabled="start",interval = 2):
