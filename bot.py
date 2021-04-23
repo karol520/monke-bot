@@ -13,47 +13,52 @@ load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 
 prefix = "."
-client = commands.Bot(command_prefix = prefix)
+bot = commands.Bot(command_prefix = prefix)
 
 
-@client.event
+@bot.event
 async def on_ready():
-    print("{0.user} has awoken from his slumber 🐒".format(client))
-    await client.change_presence(status=discord.Status.online, activity=discord.Game("🐵🍌🧠 | use .help"))
-    user = await client.fetch_user('269896500790820866')
-    channel = await user.create_dm()
-    await channel.send("I'm alive, unfortunately.")
+    print("{0.user} has awoken from his slumber 🐒".format(bot))
+    await bot.change_presence(status=discord.Status.online, activity=discord.Game("🐵🍌🧠 | use .help"))
+    #user = await bot.fetch_user('269896500790820866')
+    #channel = await user.create_dm()
+    #await channel.send("I'm alive, unfortunately.")
 
-@client.command(brief= "best boysband evr 2 gec")
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.errors.CommandInvokeError):
+        await ctx.send("something went wrong, sorry :(")
+
+@bot.command(brief= "best boysband evr 2 gec")
 async def gec(ctx):
     await ctx.channel.send(file=discord.File("gec.webm"))
 
-@client.command(brief= "monkemusic")
+@bot.command(brief= "monkemusic")
 async def monkemusic(ctx):
     await ctx.channel.send(file=discord.File("monkeymusic.webm"))
 
-@client.command(brief= "cock and balls")
+@bot.command(brief= "cock and balls")
 async def cbt(ctx):
     await ctx.channel.send("From Wikipedia, the free encyclopedia: Cock and ball torture (CBT), penis torture or dick torture is a sexual activity involving application of pain or constriction to the penis or testicles. This may involve directly painful activities, such as genital piercing, wax play, genital spanking, squeezing, ball-busting, genital flogging, urethral play, tickle torture, erotic electrostimulation, kneeing or kicking. The recipient of such activities may receive direct physical pleasure via masochism, or emotional pleasure through erotic humiliation, or knowledge that the play is pleasing to a sadistic dominant. Many of these practices carry significant health risks.")
 
-@client.command(brief= "id but monke", pass_context=True)
+@bot.command(brief= "id but monke", pass_context=True)
 async def whoami(ctx):
     await ctx.channel.send(f"You are munke {ctx.author.mention} oo oo ah ah")
 
-@client.command(brief= "omba")
+@bot.command(brief= "omba")
 async def omba(ctx):
     await ctx.channel.send("https://tenor.com/view/omba-crazy-boss-cats-kittens-gif-16828150")
 
-@client.command(brief= ";)")
+@bot.command(brief= ";)")
 async def ping(ctx):
-    if ctx.message.author == client.user:
+    if ctx.message.author == bot.user:
         return
     else:
         await ctx.channel.send("@everyone")
 
-@client.event
+@bot.event
 async def on_message(message):
-    if message.author == client.user:
+    if message.author == bot.user:
         return
     if message.content == ("h"):
         await message.channel.send("h")
@@ -65,9 +70,9 @@ async def on_message(message):
         variable1=furryshit.index(message.content)
         if variable1 >= 0 and variable1 < (len(furryshit)-1):
             await message.channel.send(furryshit[variable1+1])
-    await client.process_commands(message)
+    await bot.process_commands(message)
 
-@client.command(brief = "add numbre")
+@bot.command(brief = "add numbre")
 async def add(ctx, x, y):
     try:
         wynik = float(x)+float(y)
@@ -77,7 +82,7 @@ async def add(ctx, x, y):
     except:
         await ctx.channel.send("To nie są poprawne liczby!")
 
-@client.command(brief="make numbe r smalelr")
+@bot.command(brief="make numbe r smalelr")
 async def subt(ctx, x, y):
     try:
         wynik = float(x)-float(y)
@@ -87,7 +92,7 @@ async def subt(ctx, x, y):
     except:
         await ctx.channel.send("To nie są poprawne liczby!")
 
-@client.command(brief = f"types munke forever ({prefix}munke stop to stop)")
+@bot.command(brief = f"types munke forever ({prefix}munke stop to stop)")
 async def munke(ctx, enabled="start",interval = 2):
     if enabled.lower() == "stop":
         munkeInterval.stop()
@@ -98,7 +103,7 @@ async def munke(ctx, enabled="start",interval = 2):
 async def munkeInterval(ctx):
     await ctx.send("munke")
 
-@client.command(brief="shows info about the person you ping idk")
+@bot.command(brief="shows info about the person you ping idk")
 async def id(ctx):
     if len(ctx.message.mentions)>0:
         embed=discord.Embed(title=str(ctx.message.mentions[0]), color=0xFF5733)
@@ -130,7 +135,7 @@ async def id(ctx):
         embed.set_footer(text="ID: "+str(ctx.message.author.id))
         await ctx.send(embed=embed)
  
-@client.command(brief="farts", pass_context=True)
+@bot.command(brief="farts", pass_context=True)
 async def fart(ctx):
     channel = ctx.author.voice.channel
     if channel != None:
@@ -143,34 +148,34 @@ async def fart(ctx):
         await ctx.send(str(ctx.author.name) + "is not in a channel.")
     await ctx.message.delete()
 
-@client.command(pass_context=True, brief="joins channel")
+@bot.command(pass_context=True, brief="joins channel")
 async def join(ctx):
     channel = ctx.author.voice.channel
     await channel.connect()
 
-@client.command(brief="leaves channel")
+@bot.command(brief="leaves channel")
 async def fuckoff(ctx):
-    await ctx.voice_client.disconnect()
+    await ctx.voice_bot.disconnect()
 
-@client.command(brief="changes your nickname")
+@bot.command(brief="changes your nickname")
 async def nick(ctx, member: discord.Member, *, nick):
     await member.edit(nick=nick)
     await ctx.send(f"Changed the nickname of {member} to: {member.mention}")
 
 
-@client.command(brief="random number")
+@bot.command(brief="random number")
 async def roll(ctx,a,b):
     await ctx.send(str(random.randint(int(a),int(b))))
 
-@client.command(brief="deletes x amount of messages")
-async def clear(ctx,amount=1):
+@bot.command(brief="deletes x amount of messages")
+async def clear(ctx, amount=1):
     if amount <= 20: 
         await ctx.channel.purge(limit=amount+1)
     else:
         await ctx.channel.send("too many messages, fuck off")
 
-@client.command(brief="very cool random fact")
+@bot.command(brief="very cool random fact")
 async def randomfact(ctx):
     await ctx.send(str(facts[random.randint(0,len(facts)-1)]))
 
-client.run(TOKEN)
+bot.run(TOKEN)
