@@ -24,10 +24,10 @@ async def on_ready():
     #channel = await user.create_dm()
     #await channel.send("I"m alive, unfortunately.")
 
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.errors.CommandInvokeError):
-        await ctx.send("something went wrong, sorry :(")
+#@bot.event
+#async def on_command_error(ctx, error):
+    #if isinstance(error, commands.errors.CommandInvokeError):
+        #await ctx.send("something went wrong, sorry :(")
 
 @bot.event
 async def on_message(message):
@@ -125,28 +125,50 @@ async def randomfact(ctx):
 async def joined(ctx, member: discord.Member):
     await ctx.send(f"{member.name} joined at {member.joined_at}")
 
-@bot.command(brief="creates a poll, use .poll <question> <timer>")
-async def poll(ctx, message=None, timer=None):
-    if message == None or timer == None:
-        await ctx.send("please specify your question and timer")
+@bot.command(brief="creates a poll, use .poll <timer> <options>")
+async def poll(ctx, timer=None, *options):
+    if timer == None:
+        await ctx.send("please specify your timer and options")
+        return
+    elif not options:
+        await ctx.send("please specify your options")
         return
     try:
-        check = int(timer)
+        timer = int(timer)
     except:
         await ctx.send("timer is not a valid number")  
-        return      
-    embed = discord.Embed(title="Poll", description=f"{message}", colour=discord.Color.dark_gray())
-    message = await ctx.send(embed=embed )
-    await message.add_reaction("👍")
-    await message.add_reaction("👎")
-    time = int(timer)
-    await asyncio.sleep(time)
+        return
+    options_formatted = (', '.join(list(options)))
+    embed = discord.Embed(title="Poll", description=f"Options: {options_formatted}", colour=discord.Color.dark_gray())
+    message = await ctx.send(embed=embed)
+    num2emoji = {1: "1️⃣", 2: "2️⃣", 3: "3️⃣", 4: "4️⃣", 5: "5️⃣", 6: "6️⃣", 7: "7️⃣", 8: "8️⃣", 9: "9️⃣", 10: "🔟"}
+    if len(options) == 2:
+        await message.add_reaction("👍")
+        await message.add_reaction("👎")
+        await asyncio.sleep(timer)
+    elif len(options) > 2 and len(options) <= 10:
+        num = 1
+        for i in options:
+            await message.add_reaction(num2emoji[num])
+            num += 1
+        await asyncio.sleep(timer)
     message= await ctx.fetch_message(message.id)
-    reaction = get(message.reactions, emoji="👍")
-    num_reactions = reaction.count - 1
-    reaction2 = get(message.reactions, emoji="👎")
-    num_reactions2 = reaction2.count - 1
-    results = discord.Embed(title="Results", description=f"👍 votes: {num_reactions}\n\n👎 votes: {num_reactions2}", colour=discord.Color.red())
+    if len(options) == 2:
+        reactions = dict.fromkeys(options)
+        reaction1 = get(message.reactions, emoji="👍")
+        reaction2 = get(message.reactions, emoji="👎")
+        reactions[options[0]] = reaction1.count - 1
+        reactions[options[1]] = reaction2.count - 1
+        reactions_formatted = ('\n'.join("{}: {}".format(k, v) for k, v in reactions.items()))
+    elif len(options) > 2 and len(options) <= 10:
+        reactions = dict.fromkeys(options)
+        num = 1
+        for i in options:
+            kurwajapierdole = get(message.reactions, emoji=num2emoji[num])
+            reactions[options[num-1].format(num-1)] = kurwajapierdole.count - 1
+            num += 1
+        reactions_formatted = ('\n'.join("{}: {}".format(k, v) for k, v in reactions.items()))
+    results = discord.Embed(title="Results", description=f"Results:\n{reactions_formatted}", colour=discord.Color.red())
     await ctx.send(embed=results)
 
 
