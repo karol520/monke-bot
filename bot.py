@@ -151,7 +151,7 @@ async def poll(ctx, timer=None, *options):
         await asyncio.sleep(timer)
     elif len(options) > 2 and len(options) <= 10:
         num = 1
-        for i in options:
+        for _ in options:
             await message.add_reaction(num2emoji[num])
             num += 1
         await asyncio.sleep(timer)
@@ -166,7 +166,7 @@ async def poll(ctx, timer=None, *options):
     elif len(options) > 2 and len(options) <= 10:
         reactions = dict.fromkeys(options)
         num = 1
-        for i in options:
+        for _ in options:
             kurwajapierdole = get(message.reactions, emoji=num2emoji[num])
             reactions[options[num-1].format(num-1)] = kurwajapierdole.count - 1
             num += 1
