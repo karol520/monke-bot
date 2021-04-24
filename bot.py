@@ -24,10 +24,10 @@ async def on_ready():
     #channel = await user.create_dm()
     #await channel.send("I"m alive, unfortunately.")
 
-#@bot.event
-#async def on_command_error(ctx, error):
-    #if isinstance(error, commands.errors.CommandInvokeError):
-        #await ctx.send("something went wrong, sorry :(")
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.errors.CommandInvokeError):
+        await ctx.send("something went wrong, sorry :(")
 
 @bot.event
 async def on_message(message):
@@ -133,15 +133,18 @@ async def poll(ctx, timer=None, *options):
     elif not options:
         await ctx.send("please specify your options")
         return
+    elif len(options) not in range (1, 10):
+        await ctx.send("you have added too many options!")
+        return
     try:
         timer = int(timer)
     except:
         await ctx.send("timer is not a valid number")  
         return
-    options_formatted = (', '.join(list(options)))
+    num2emoji = {1: "1️⃣", 2: "2️⃣", 3: "3️⃣", 4: "4️⃣", 5: "5️⃣", 6: "6️⃣", 7: "7️⃣", 8: "8️⃣", 9: "9️⃣", 10: "🔟"}
+    options_formatted = (", ".join(options))
     embed = discord.Embed(title="Poll", description=f"Options: {options_formatted}", colour=discord.Color.dark_gray())
     message = await ctx.send(embed=embed)
-    num2emoji = {1: "1️⃣", 2: "2️⃣", 3: "3️⃣", 4: "4️⃣", 5: "5️⃣", 6: "6️⃣", 7: "7️⃣", 8: "8️⃣", 9: "9️⃣", 10: "🔟"}
     if len(options) == 2:
         await message.add_reaction("👍")
         await message.add_reaction("👎")
@@ -159,7 +162,7 @@ async def poll(ctx, timer=None, *options):
         reaction2 = get(message.reactions, emoji="👎")
         reactions[options[0]] = reaction1.count - 1
         reactions[options[1]] = reaction2.count - 1
-        reactions_formatted = ('\n'.join("{}: {}".format(k, v) for k, v in reactions.items()))
+        reactions_formatted = ("\n".join("{}: {}".format(k, v) for k, v in reactions.items()))
     elif len(options) > 2 and len(options) <= 10:
         reactions = dict.fromkeys(options)
         num = 1
@@ -167,8 +170,8 @@ async def poll(ctx, timer=None, *options):
             kurwajapierdole = get(message.reactions, emoji=num2emoji[num])
             reactions[options[num-1].format(num-1)] = kurwajapierdole.count - 1
             num += 1
-        reactions_formatted = ('\n'.join("{}: {}".format(k, v) for k, v in reactions.items()))
-    results = discord.Embed(title="Results", description=f"Results:\n{reactions_formatted}", colour=discord.Color.red())
+        reactions_formatted = ("\n".join("{}: {}".format(k, v) for k, v in reactions.items()))
+    results = discord.Embed(title="Results:", description=f"{reactions_formatted}", colour=discord.Color.red())
     await ctx.send(embed=results)
 
 
