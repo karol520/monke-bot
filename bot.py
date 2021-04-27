@@ -187,10 +187,10 @@ async def balance(ctx):
             gambling = json.load(f)
     if len(ctx.message.mentions) > 0:
         await ctx.send(f"account balance of {ctx.message.mentions[0]}: {gambling.get(str(ctx.message.mentions[0]))}")
-        await ctx.send(file=discord.File("/images/2moners.jpg"))
+        await ctx.send(file=discord.File("/images/5moners.jpg"))
     else:
         await ctx.send(f"your account balance: {gambling.get(str(ctx.message.author))}")
-        await ctx.send(file=discord.File("/images/2moners.jpg"))
+        await ctx.send(file=discord.File("/images/5moners.jpg"))
     
 @bot.command(brief="‎shows top gambling addicts")
 async def baltop(ctx):
