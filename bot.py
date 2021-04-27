@@ -67,7 +67,7 @@ async def omba(ctx):
 
 @bot.command(brief="literally sends nothing‎")
 async def empty(ctx):
-    await ctx.send('‎\n'*40)
+    await ctx.send("‎\n"*40)
 
 @bot.command(brief="translate stuff(codes list: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)")
 async def translate(ctx, fromlang, tolang, *, text):
@@ -144,25 +144,33 @@ async def slots(ctx, bet=1):
         gambling = json.load(f)
     if str(ctx.author.id) not in gambling.keys():
         gambling.update({str(ctx.author.id):50})
-    shapelist = ["🐵", "🍌", "💩"]
+    shapelist = ["🚀", "🐵", "🍌", "💩"]
     accountbal = gambling.get(str(ctx.message.author))
     response = "you lost LMAOOOOOOO"
+    if int(bet) > accountbal:
+        await ctx.send(f"you can't afford this but you can always use {prefix}freemoney")
+        return
+    elif int(bet) < 1:
+        await ctx.send("bruh")
+        return
     result1 = random.choice(shapelist)
     result2 = random.choice(shapelist)
     result3 = random.choice(shapelist)
     if result1 == result2 == result3:
-        if result1 == "🐵":
-            gambling.update({str(ctx.message.author):accountbal+bet*25})
+        if result1 == "🚀":
+            gambling.update({str(ctx.message.author):accountbal+bet*75})
+            response = ("rocket")
+        elif result1 == "🐵":
+            gambling.update({str(ctx.message.author):accountbal+bet*50})
             response = ("you won a monkey :)")
         elif result1 == "🍌":
             gambling.update({str(ctx.message.author):accountbal+bet*25})
             response = ("you won banan, pretty cool")
         elif result1 == "💩":
-            gambling.update({str(ctx.message.author):accountbal+bet*25})
+            gambling.update({str(ctx.message.author):accountbal+bet*5})
             response = ("haha poop :DDDDD")
     else:
-        x = gambling.get(str(ctx.author.id))
-        gambling.update({str(ctx.author.id):x-1})
+        gambling.update({str(ctx.message.author):accountbal-int(bet)})
     with open("slots.json", "w") as f:
         json.dump(gambling, f)
     f.close()
@@ -185,7 +193,7 @@ async def balance(ctx):
         await ctx.send(file=discord.File("/images/2moners.jpg"))
     
 @bot.command(brief="‎shows top gambling addicts")
-async def balancetop(ctx):
+async def baltop(ctx):
     with open("slots.json", "r") as f:
         gambling = json.load(f)
     marklist = sorted(gambling.items(), key=lambda item: item[1], reverse=True)
@@ -206,14 +214,14 @@ async def freemoney(ctx):
         gambling = json.load(f)
     check = gambling.get(str(ctx.message.author))
     if check == 0:
-        gambling.update({str(ctx.message.author):20})
-        await ctx.send(':)')
+        gambling.update({str(ctx.message.author):30})
+        await ctx.send(":)")
     with open("slots.json", "w") as balances:
             json.dump(gambling, balances)
     balances.close()
 
 @bot.command(brief="‎give money to someone else")
-async def przelew(ctx, amount=1):
+async def givemoney(ctx, amount=1):
     with open("slots.json", "r") as f:
         gambling = json.load(f)
     accountbal1 = gambling.get(str(ctx.message.author))
