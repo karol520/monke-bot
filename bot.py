@@ -261,7 +261,7 @@ async def shop(ctx, option=""):
         else:
             await ctx.send("@everyone")
     elif option == "2":
-        price = 25000
+        price = 2000
         if price > accountbal:
             await ctx.send("poor lmao")
         else:
@@ -291,9 +291,11 @@ async def shop(ctx, option=""):
         if price > accountbal:
             await ctx.send("really? you can't afford that?")
         else:
-            api_price = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd").json()
-            price = float(api_price["bitcoin"]["usd"])
-            await ctx.send(f"the current price of bitcoin is: {price}")
+            api_data = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=true&include_24hr_change=true").json()
+            price = int(api_data["bitcoin"]["usd"])
+            marketcap = "{:,}".format(int(api_data["bitcoin"]["usd_market_cap"]))
+            twentyfourhour = round(float(api_data["bitcoin"]["usd_24h_change"]), 5)
+            await ctx.send(f"the current price of bitcoin is: ${price}\nmarket cap: ${marketcap}\n24h change: {twentyfourhour}%")
     else:
         await ctx.send("no such option exists... yet?")
 
