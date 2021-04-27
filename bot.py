@@ -8,6 +8,7 @@ from discord.ext import commands, tasks
 from discord.ext.commands import Bot
 from discord.voice_client import VoiceClient
 from dotenv import load_dotenv
+from translate import Translator
 from vars import facts, furryshit
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -23,10 +24,10 @@ async def on_ready():
     #channel = await user.create_dm()
     #await channel.send("I"m alive, unfortunately.")
 
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.errors.CommandInvokeError):
-        await ctx.send("something went wrong, sorry :(")
+#@bot.event
+#async def on_command_error(ctx, error):
+    #if isinstance(error, commands.errors.CommandInvokeError):
+        #await ctx.send("something went wrong, sorry :(")
 
 @bot.event
 async def on_message(message):
@@ -63,6 +64,19 @@ async def whoami(ctx):
 @bot.command(brief= "omba funny gif")
 async def omba(ctx):
     await ctx.send("https://tenor.com/view/omba-crazy-boss-cats-kittens-gif-16828150")
+
+@bot.command(brief="literally sends nothing‎")
+async def empty(ctx):
+    await ctx.send('‎\n'*40)
+
+@bot.command(brief="translate stuff(codes list: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)")
+async def translate(ctx, fromlang, tolang, *, text):
+    translator= Translator(to_lang=tolang, from_lang=fromlang)
+    translation = translator.translate(text)
+    embed=discord.Embed(title="Translator")
+    embed.add_field(name=f"{fromlang}".upper(), value=f"{text}", inline=True)
+    embed.add_field(name=f"{tolang}".upper(), value=f"{translation}", inline=True)
+    await ctx.send(embed=embed)
 
 @bot.command(brief= ";)")
 async def ping(ctx):
@@ -125,29 +139,27 @@ async def joined(ctx, member: discord.Member):
     await ctx.send(f"{member.name} joined at {member.joined_at}")
 
 @bot.command(brief="crippling gambling addiction :trollge:")
-async def slots(ctx):
+async def slots(ctx, bet=1):
     with open("slots.json", "r") as f:
         gambling = json.load(f)
     if str(ctx.author.id) not in gambling.keys():
-        gambling.update({str(ctx.author.id):20})
+        gambling.update({str(ctx.author.id):50})
     shapelist = ["🐵", "🍌", "💩"]
+    accountbal = gambling.get(str(ctx.message.author))
     response = "you lost LMAOOOOOOO"
     result1 = random.choice(shapelist)
     result2 = random.choice(shapelist)
     result3 = random.choice(shapelist)
     if result1 == result2 == result3:
         if result1 == "🐵":
+            gambling.update({str(ctx.message.author):accountbal+bet*25})
             response = ("you won a monkey :)")
-            x = gambling.get(str(ctx.author.id))
-            gambling.update({str(ctx.author.id):x+25})
         elif result1 == "🍌":
+            gambling.update({str(ctx.message.author):accountbal+bet*25})
             response = ("you won banan, pretty cool")
-            x = gambling.get(str(ctx.author.id))
-            gambling.update({str(ctx.author.id):x+10})
         elif result1 == "💩":
+            gambling.update({str(ctx.message.author):accountbal+bet*25})
             response = ("haha poop :DDDDD")
-            x = gambling.get(str(ctx.author.id))
-            gambling.update({str(ctx.author.id):x+5})
     else:
         x = gambling.get(str(ctx.author.id))
         gambling.update({str(ctx.author.id):x-1})
@@ -160,6 +172,63 @@ async def slots(ctx):
     embed.add_field(name="3️⃣", value=f"{result3}\t", inline=True)
     embed.set_footer(text=f"{response}\nyour balance: {gambling[str(ctx.author.id)]}")
     await ctx.send(embed=embed)
+
+@bot.command(brief="checks your account balance")
+async def balance(ctx):
+    with open("slots.json", "r") as f:
+            gambling = json.load(f)
+    if len(ctx.message.mentions) > 0:
+        await ctx.send(f"account balance of {ctx.message.mentions[0]}: {gambling.get(str(ctx.message.mentions[0]))}")
+        await ctx.send(file=discord.File("/images/2moners.jpg"))
+    else:
+        await ctx.send(f"your account balance: {gambling.get(str(ctx.message.author))}")
+        await ctx.send(file=discord.File("/images/2moners.jpg"))
+    
+@bot.command(brief="‎shows top gambling addicts")
+async def balancetop(ctx):
+    with open("slots.json", "r") as f:
+        gambling = json.load(f)
+    marklist = sorted(gambling.items(), key=lambda item: item[1], reverse=True)
+    sortdict = dict(marklist)
+    bvalues = list(sortdict.values())
+    bkeys = list(sortdict)
+    embed=discord.Embed(title="top retards")
+    embed.add_field(name=f"{bkeys[0]}", value=f"{bvalues[0]}", inline=False)
+    embed.add_field(name=f"{bkeys[1]}", value=f"{bvalues[1]}", inline=False)
+    embed.add_field(name=f"{bkeys[2]}", value=f"{bvalues[2]}", inline=False)
+    embed.add_field(name=f"{bkeys[3]}", value=f"{bvalues[3]}", inline=False)
+    embed.add_field(name=f"{bkeys[4]}", value=f"{bvalues[4]}", inline=False)
+    await ctx.send(embed=embed)
+
+@bot.command(brief="‎bitcoin")
+async def freemoney(ctx):
+    with open("slots.json", "r") as f:
+        gambling = json.load(f)
+    check = gambling.get(str(ctx.message.author))
+    if check == 0:
+        gambling.update({str(ctx.message.author):20})
+        await ctx.send(':)')
+    with open("slots.json", "w") as balances:
+            json.dump(gambling, balances)
+    balances.close()
+
+@bot.command(brief="‎give money to someone else")
+async def przelew(ctx, amount=1):
+    with open("slots.json", "r") as f:
+        gambling = json.load(f)
+    accountbal1 = gambling.get(str(ctx.message.author))
+    accountbal2 = gambling.get(str(ctx.message.mentions[0]))
+    if amount > accountbal1:
+        await ctx.send("you can't afford that")
+    if amount < 0:
+        await ctx.send("bruh")
+    else:
+        gambling.update({str(ctx.message.author):accountbal1-amount})
+        gambling.update({str(ctx.message.mentions[0]):accountbal2+amount})
+        with open("slots.json", "r") as balances:
+            json.dump(gambling, balances)
+        balances.close()
+        await ctx.send(f"transferred {amount} to {ctx.message.mentions[0]}")
 
 @bot.command(brief="creates a poll, use .poll <timer> <options>")
 async def poll(ctx, timer=None, *options):

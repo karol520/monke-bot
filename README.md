@@ -1,4 +1,4 @@
-![monke bot logo](/logo.png)
+![monke bot logo](/images/logo.png)
 # monke bot
 
 monke bot is an **awful** discord bot written in discord.py.
