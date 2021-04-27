@@ -73,14 +73,14 @@ async def empty(ctx):
 async def translate(ctx, fromlang, tolang, *, text):
     translator= Translator(to_lang=tolang, from_lang=fromlang)
     translation = translator.translate(text)
-    embed=discord.Embed(title="Translator")
+    embed=discord.Embed(title="translator")
     embed.add_field(name=f"{fromlang}".upper(), value=f"{text}", inline=True)
     embed.add_field(name=f"{tolang}".upper(), value=f"{translation}", inline=True)
     await ctx.send(embed=embed)
 
 @bot.command(brief= ";)")
 async def ping(ctx):
-    if ctx.message.author == bot.user:
+    if ctx.author == bot.user:
         return
     else:
         await ctx.send("@everyone")
@@ -142,10 +142,10 @@ async def joined(ctx, member: discord.Member):
 async def slots(ctx, bet=1):
     with open("slots.json", "r") as f:
         gambling = json.load(f)
-    if str(ctx.author.id) not in gambling.keys():
-        gambling.update({str(ctx.author.id):50})
+    if str(ctx.author) not in gambling.keys():
+        gambling.update({str(ctx.author):50})
     shapelist = ["🚀", "🐵", "🍌", "💩"]
-    accountbal = gambling.get(str(ctx.message.author))
+    accountbal = gambling.get(str(ctx.author))
     response = "you lost LMAOOOOOOO"
     if int(bet) > accountbal:
         await ctx.send(f"you can't afford this but you can always use {prefix}freemoney")
@@ -158,19 +158,19 @@ async def slots(ctx, bet=1):
     result3 = random.choice(shapelist)
     if result1 == result2 == result3:
         if result1 == "🚀":
-            gambling.update({str(ctx.message.author):accountbal+bet*75})
+            gambling.update({str(ctx.author):accountbal+bet*75})
             response = ("rocket")
         elif result1 == "🐵":
-            gambling.update({str(ctx.message.author):accountbal+bet*50})
+            gambling.update({str(ctx.author):accountbal+bet*50})
             response = ("you won a monkey :)")
         elif result1 == "🍌":
-            gambling.update({str(ctx.message.author):accountbal+bet*25})
+            gambling.update({str(ctx.author):accountbal+bet*25})
             response = ("you won banan, pretty cool")
         elif result1 == "💩":
-            gambling.update({str(ctx.message.author):accountbal+bet*5})
+            gambling.update({str(ctx.author):accountbal+bet*5})
             response = ("haha poop :DDDDD")
     else:
-        gambling.update({str(ctx.message.author):accountbal-int(bet)})
+        gambling.update({str(ctx.author):accountbal-int(bet)})
     with open("slots.json", "w") as f:
         json.dump(gambling, f)
     f.close()
@@ -178,7 +178,7 @@ async def slots(ctx, bet=1):
     embed.add_field(name="1️⃣", value=f"{result1}\t", inline=True)
     embed.add_field(name="2️⃣", value=f"{result2}\t", inline=True)
     embed.add_field(name="3️⃣", value=f"{result3}\t", inline=True)
-    embed.set_footer(text=f"{response}\nyour balance: {gambling[str(ctx.author.id)]}")
+    embed.set_footer(text=f"{response}\nyour balance: {gambling[str(ctx.author)]}")
     await ctx.send(embed=embed)
 
 @bot.command(brief="checks your account balance")
@@ -187,10 +187,10 @@ async def balance(ctx):
             gambling = json.load(f)
     if len(ctx.message.mentions) > 0:
         await ctx.send(f"account balance of {ctx.message.mentions[0]}: {gambling.get(str(ctx.message.mentions[0]))}")
-        await ctx.send(file=discord.File("/images/5moners.jpg"))
+        await ctx.send(file=discord.File("images/5moners.jpg"))
     else:
-        await ctx.send(f"your account balance: {gambling.get(str(ctx.message.author))}")
-        await ctx.send(file=discord.File("/images/5moners.jpg"))
+        await ctx.send(f"your account balance: {gambling.get(str(ctx.author))}")
+        await ctx.send(file=discord.File("images/5moners.jpg"))
     
 @bot.command(brief="‎shows top gambling addicts")
 async def baltop(ctx):
@@ -198,23 +198,26 @@ async def baltop(ctx):
         gambling = json.load(f)
     marklist = sorted(gambling.items(), key=lambda item: item[1], reverse=True)
     sortdict = dict(marklist)
-    bvalues = list(sortdict.values())
+    sort = json.dumps(sortdict, indent=0)
     bkeys = list(sortdict)
+    bvalues = list(sortdict.values())
     embed=discord.Embed(title="top retards")
-    embed.add_field(name=f"{bkeys[0]}", value=f"{bvalues[0]}", inline=False)
-    embed.add_field(name=f"{bkeys[1]}", value=f"{bvalues[1]}", inline=False)
-    embed.add_field(name=f"{bkeys[2]}", value=f"{bvalues[2]}", inline=False)
-    embed.add_field(name=f"{bkeys[3]}", value=f"{bvalues[3]}", inline=False)
-    embed.add_field(name=f"{bkeys[4]}", value=f"{bvalues[4]}", inline=False)
+    num = 0
+    for i in range(3):
+        if 0 <= num < len(bkeys):
+            embed.add_field(name=f"{bkeys[num]}", value=f"{bvalues[num]}", inline=False)
+        else:
+            break
+        num += 1
     await ctx.send(embed=embed)
 
 @bot.command(brief="‎bitcoin")
 async def freemoney(ctx):
     with open("slots.json", "r") as f:
         gambling = json.load(f)
-    check = gambling.get(str(ctx.message.author))
+    check = gambling.get(str(ctx.author))
     if check == 0:
-        gambling.update({str(ctx.message.author):30})
+        gambling.update({str(ctx.author):30})
         await ctx.send(":)")
     with open("slots.json", "w") as balances:
             json.dump(gambling, balances)
@@ -224,14 +227,14 @@ async def freemoney(ctx):
 async def givemoney(ctx, amount=1):
     with open("slots.json", "r") as f:
         gambling = json.load(f)
-    accountbal1 = gambling.get(str(ctx.message.author))
+    accountbal1 = gambling.get(str(ctx.author))
     accountbal2 = gambling.get(str(ctx.message.mentions[0]))
     if amount > accountbal1:
         await ctx.send("you can't afford that")
     if amount < 0:
         await ctx.send("bruh")
     else:
-        gambling.update({str(ctx.message.author):accountbal1-amount})
+        gambling.update({str(ctx.author):accountbal1-amount})
         gambling.update({str(ctx.message.mentions[0]):accountbal2+amount})
         with open("slots.json", "r") as balances:
             json.dump(gambling, balances)
@@ -330,17 +333,17 @@ async def id(ctx):
 
     else:
         embed=discord.Embed(title="Your profile", color=0xFF5733)
-        embed.set_image(url = ctx.message.author.avatar_url)
-        embed.add_field(name="Account created:", value=str(ctx.message.author.created_at.strftime("%A, %B %d %Y @ %H:%M:%S %p")), inline=False)
-        embed.add_field(name="Joined server:", value=str(ctx.message.author.joined_at.strftime("%A, %B %d %Y @ %H:%M:%S %p")), inline=False)
-        if ctx.message.author.premium_since != None:
-            embed.add_field(name="Boosted server:", value=str(ctx.message.author.premium_since.strftime("%A, %B %d %Y @ %H:%M:%S %p")), inline=False)
+        embed.set_image(url = ctx.author.avatar_url)
+        embed.add_field(name="Account created:", value=str(ctx.author.created_at.strftime("%A, %B %d %Y @ %H:%M:%S %p")), inline=False)
+        embed.add_field(name="Joined server:", value=str(ctx.author.joined_at.strftime("%A, %B %d %Y @ %H:%M:%S %p")), inline=False)
+        if ctx.author.premium_since != None:
+            embed.add_field(name="Boosted server:", value=str(ctx.author.premium_since.strftime("%A, %B %d %Y @ %H:%M:%S %p")), inline=False)
         role = []
-        for ranga in ctx.message.author.roles:
+        for ranga in ctx.author.roles:
             role.append(f"<@&{str(ranga.id)}>")
         del role[0]
         embed.add_field(name="Roles:", value=str(", ".join(role)), inline=False)
-        embed.set_footer(text="ID: "+str(ctx.message.author.id))
+        embed.set_footer(text="ID: "+str(ctx.author.id))
         await ctx.send(embed=embed)
 
 bot.run(TOKEN)
