@@ -24,10 +24,10 @@ async def on_ready():
     #channel = await user.create_dm()
     #await channel.send("I"m alive, unfortunately.")
 
-#@bot.event
-#async def on_command_error(ctx, error):
-    #if isinstance(error, commands.errors.CommandInvokeError):
-        #await ctx.send("something went wrong, sorry :(")
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.errors.CommandInvokeError):
+        await ctx.send("something went wrong, sorry :(")
 
 @bot.event
 async def on_message(message):
