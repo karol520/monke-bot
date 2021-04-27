@@ -1,4 +1,4 @@
-import discord, random, asyncio, os, time, json, vars
+import discord, random, asyncio, os, requests, time, json, vars
 from discord import voice_client
 from discord import message
 from discord import user
@@ -24,10 +24,10 @@ async def on_ready():
     #channel = await user.create_dm()
     #await channel.send("I"m alive, unfortunately.")
 
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.errors.CommandInvokeError):
-        await ctx.send("something went wrong, sorry :(")
+#@bot.event
+#async def on_command_error(ctx, error):
+    #if isinstance(error, commands.errors.CommandInvokeError):
+        #await ctx.send("something went wrong, sorry :(")
 
 @bot.event
 async def on_message(message):
@@ -203,7 +203,7 @@ async def baltop(ctx):
     bvalues = list(sortdict.values())
     embed=discord.Embed(title="top retards")
     num = 0
-    for i in range(3):
+    for _ in range(3):
         if 0 <= num < len(bkeys):
             embed.add_field(name=f"{bkeys[num]}", value=f"{bvalues[num]}", inline=False)
         else:
@@ -224,7 +224,7 @@ async def freemoney(ctx):
     balances.close()
 
 @bot.command(brief="‎give money to someone else")
-async def givemoney(ctx, amount=1):
+async def give(ctx, amount=1):
     with open("slots.json", "r") as f:
         gambling = json.load(f)
     accountbal1 = gambling.get(str(ctx.author))
@@ -236,10 +236,70 @@ async def givemoney(ctx, amount=1):
     else:
         gambling.update({str(ctx.author):accountbal1-amount})
         gambling.update({str(ctx.message.mentions[0]):accountbal2+amount})
-        with open("slots.json", "r") as balances:
+        with open("slots.json", "w") as balances:
             json.dump(gambling, balances)
         balances.close()
         await ctx.send(f"transferred {amount} to {ctx.message.mentions[0]}")
+    
+@bot.command(brief="spend your money on stuff")
+async def shop(ctx, option=""):
+    with open("slots.json", "r") as f:
+        obj = json.load(f)
+    accountbal = obj.get(str(ctx.message.author))
+    if option == "":
+        embed=discord.Embed(title="shop", description=f"{prefix}shop <option>", color=discord.Color.purple())
+        embed.add_field(name="1. ping @everyone", value="72769", inline=True)
+        embed.add_field(name="2. send a dm to whoever you want, may or may not work", value="2000", inline=False)
+        embed.add_field(name="3. banana, full of potassium and tasty", value="100", inline=False)
+        embed.add_field(name="4. get the current price of bitcoin", value="30", inline=True)
+        embed.set_footer(text=f"account balance: {obj.get(str(ctx.message.author))}")
+        await ctx.send(embed=embed)
+    elif option == "1":
+        price = 72769
+        if price > accountbal:
+            await ctx.send("you're not jeff bezos")
+        else:
+            await ctx.send("@everyone")
+    elif option == "2":
+        price = 25000
+        if price > accountbal:
+            await ctx.send("poor lmao")
+        else:
+            await ctx.send("please send the id of the person you want to message")
+            try:
+                event1 = await bot.wait_for("message", check=lambda message: message.author == ctx.author)
+                user_id = event1.content
+            except asyncio.TimeoutError:
+                await ctx.send("sorry, you didn't reply in time!")
+            await ctx.send("please send the content of the message")
+            try:
+                event2 = await bot.wait_for("message", check=lambda message: message.author == ctx.author)
+                msg = event2.content
+            except asyncio.TimeoutError:
+                await ctx.send("sorry, you didn't reply in time!")
+            user = await bot.fetch_user(user_id)
+            channel = await user.create_dm()
+            await channel.send(msg)
+    elif option == "3":
+        price = 100
+        if price > accountbal:
+            await ctx.send("poor lmao")
+        else:
+            await ctx.send(file=discord.File("images/banana.gif"))
+    elif option == "4":
+        price = 30
+        if price > accountbal:
+            await ctx.send("really? you can't afford that?")
+        else:
+            api_price = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd").json()
+            price = float(api_price["bitcoin"]["usd"])
+            await ctx.send(f"the current price of bitcoin is: {price}")
+    else:
+        await ctx.send("no such option exists... yet?")
+
+    with open("slots.json", "w") as balances:
+        json.dump(obj, balances)
+    balances.close()
 
 @bot.command(brief="creates a poll, use .poll <timer> <options>")
 async def poll(ctx, timer=None, *options):
