@@ -259,12 +259,14 @@ async def shop(ctx, option=""):
         if price > accountbal:
             await ctx.send("you're not jeff bezos")
         else:
+            obj.update({str(ctx.message.author):accountbal-price})
             await ctx.send("@everyone")
     elif option == "2":
         price = 2000
         if price > accountbal:
             await ctx.send("poor lmao")
         else:
+            obj.update({str(ctx.message.author):accountbal-price})
             await ctx.send("please send the id of the person you want to message")
             try:
                 event1 = await bot.wait_for("message", check=lambda message: message.author == ctx.author)
@@ -285,12 +287,14 @@ async def shop(ctx, option=""):
         if price > accountbal:
             await ctx.send("poor lmao")
         else:
+            obj.update({str(ctx.message.author):accountbal-price})
             await ctx.send(file=discord.File("images/banana.gif"))
     elif option == "4":
         price = 30
         if price > accountbal:
             await ctx.send("really? you can't afford that?")
         else:
+            obj.update({str(ctx.message.author):accountbal-price})
             api_data = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_market_cap=true&include_24hr_change=true").json()
             price = int(api_data["bitcoin"]["usd"])
             marketcap = "{:,}".format(int(api_data["bitcoin"]["usd_market_cap"]))
