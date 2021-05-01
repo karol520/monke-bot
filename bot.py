@@ -47,11 +47,11 @@ async def on_message(message):
 
 @bot.command(brief= "best boysband evr 2 gec")
 async def gec(ctx):
-    await ctx.send(file=discord.File("gec.webm"))
+    await ctx.send(file=discord.File("media/gec.webm"))
 
 @bot.command(brief= "monkey music video")
 async def monkemusic(ctx):
-    await ctx.send(file=discord.File("monkeymusic.webm"))
+    await ctx.send(file=discord.File("media/monkeymusic.webm"))
 
 @bot.command(brief= "cock and balls")
 async def cbt(ctx):
@@ -69,7 +69,7 @@ async def omba(ctx):
 async def empty(ctx):
     await ctx.send("‎\n"*40)
 
-@bot.command(brief="translate stuff(codes list: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)")
+@bot.command(brief="translate stuff(codes list: https://bit.ly/3nvtMx4)")
 async def translate(ctx, fromlang, tolang, *, text):
     translator= Translator(to_lang=tolang, from_lang=fromlang)
     translation = translator.translate(text)
@@ -140,7 +140,7 @@ async def joined(ctx, member: discord.Member):
 
 @bot.command(brief="crippling gambling addiction :trollge:")
 async def slots(ctx, bet=1):
-    with open("slots.json", "r") as f:
+    with open("data/slots.json", "r") as f:
         gambling = json.load(f)
     if str(ctx.author) not in gambling.keys():
         gambling.update({str(ctx.author):50})
@@ -171,7 +171,7 @@ async def slots(ctx, bet=1):
             response = ("haha poop :DDDDD")
     else:
         gambling.update({str(ctx.author):accountbal-int(bet)})
-    with open("slots.json", "w") as f:
+    with open("data/slots.json", "w") as f:
         json.dump(gambling, f)
     f.close()
     embed=discord.Embed(title="gambling :O")
@@ -183,18 +183,18 @@ async def slots(ctx, bet=1):
 
 @bot.command(brief="checks your account balance")
 async def balance(ctx):
-    with open("slots.json", "r") as f:
+    with open("data/slots.json", "r") as f:
             gambling = json.load(f)
     if len(ctx.message.mentions) > 0:
         await ctx.send(f"account balance of {ctx.message.mentions[0]}: {gambling.get(str(ctx.message.mentions[0]))}")
-        await ctx.send(file=discord.File("images/5moners.jpg"))
+        await ctx.send(file=discord.File("media/5moners.jpg"))
     else:
         await ctx.send(f"your account balance: {gambling.get(str(ctx.author))}")
-        await ctx.send(file=discord.File("images/5moners.jpg"))
+        await ctx.send(file=discord.File("media/5moners.jpg"))
     
 @bot.command(brief="‎shows top gambling addicts")
 async def baltop(ctx):
-    with open("slots.json", "r") as f:
+    with open("data/slots.json", "r") as f:
         gambling = json.load(f)
     marklist = sorted(gambling.items(), key=lambda item: item[1], reverse=True)
     sortdict = dict(marklist)
@@ -213,19 +213,19 @@ async def baltop(ctx):
 
 @bot.command(brief="‎bitcoin")
 async def freemoney(ctx):
-    with open("slots.json", "r") as f:
+    with open("data/slots.json", "r") as f:
         gambling = json.load(f)
     check = gambling.get(str(ctx.author))
     if check == 0:
         gambling.update({str(ctx.author):30})
         await ctx.send(":)")
-    with open("slots.json", "w") as balances:
+    with open("data/slots.json", "w") as balances:
             json.dump(gambling, balances)
     balances.close()
 
 @bot.command(brief="‎give money to someone else")
 async def give(ctx, amount=1):
-    with open("slots.json", "r") as f:
+    with open("data/slots.json", "r") as f:
         gambling = json.load(f)
     accountbal1 = gambling.get(str(ctx.author))
     accountbal2 = gambling.get(str(ctx.message.mentions[0]))
@@ -236,14 +236,14 @@ async def give(ctx, amount=1):
     else:
         gambling.update({str(ctx.author):accountbal1-amount})
         gambling.update({str(ctx.message.mentions[0]):accountbal2+amount})
-        with open("slots.json", "w") as balances:
+        with open("data/slots.json", "w") as balances:
             json.dump(gambling, balances)
         balances.close()
         await ctx.send(f"transferred {amount} to {ctx.message.mentions[0]}")
     
 @bot.command(brief="spend your money on stuff")
 async def shop(ctx, option=""):
-    with open("slots.json", "r") as f:
+    with open("data/slots.json", "r") as f:
         obj = json.load(f)
     accountbal = obj.get(str(ctx.message.author))
     if option == "":
@@ -288,7 +288,7 @@ async def shop(ctx, option=""):
             await ctx.send("poor lmao")
         else:
             obj.update({str(ctx.message.author):accountbal-price})
-            await ctx.send(file=discord.File("images/banana.gif"))
+            await ctx.send(file=discord.File("media/banana.gif"))
     elif option == "4":
         price = 30
         if price > accountbal:
@@ -303,7 +303,7 @@ async def shop(ctx, option=""):
     else:
         await ctx.send("no such option exists... yet?")
 
-    with open("slots.json", "w") as balances:
+    with open("data/slots.json", "w") as balances:
         json.dump(obj, balances)
     balances.close()
 
