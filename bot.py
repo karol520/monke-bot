@@ -45,6 +45,10 @@ async def on_message(message):
             await message.channel.send(furryshit[variable1+1])
     await bot.process_commands(message)
 
+@bot.command(brief="get the invite link")
+async def invite(ctx):
+    await ctx.send("https://discord.com/api/oauth2/authorize?client_id=746416948765524148&permissions=8&scope=bot")
+    
 @bot.command(brief= "best boysband evr 2 gec")
 async def gec(ctx):
     await ctx.send(file=discord.File("media/gec.webm"))
