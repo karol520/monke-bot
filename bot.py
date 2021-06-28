@@ -376,7 +376,7 @@ async def fart(ctx):
     channel = ctx.author.voice.channel
     if channel != None:
         vc = await channel.connect()
-        vc.play(discord.FFmpegPCMAudio(source="fart.mp3"))
+        vc.play(discord.FFmpegPCMAudio(source="media/fart.mp3"))
         while vc.is_playing():
             time.sleep(.1)
         await vc.disconnect()
