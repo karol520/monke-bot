@@ -7,11 +7,12 @@ from discord.utils import get
 from discord.ext import commands, tasks
 from discord.ext.commands import Bot
 from discord.voice_client import VoiceClient
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from translate import Translator
 from vars import facts, furryshit
-load_dotenv()
+load_dotenv(find_dotenv())
 TOKEN = os.getenv("DISCORD_TOKEN")
+SPECIAL_USER = os.getenv("COOL")
 
 prefix = "."
 bot = commands.Bot(command_prefix = prefix)
@@ -69,9 +70,9 @@ async def whoami(ctx):
 async def omba(ctx):
     await ctx.send("https://tenor.com/view/omba-crazy-boss-cats-kittens-gif-16828150")
 
-@bot.command(brief="literally sends nothing‎")
+@bot.command(brief="literally sends nothing")
 async def empty(ctx):
-    await ctx.send("‎\n"*40)
+    await ctx.send("\n"*40)
 
 @bot.command(brief="translate stuff(codes list: https://bit.ly/3nvtMx4)")
 async def translate(ctx, fromlang, tolang, *, text):
@@ -196,7 +197,7 @@ async def balance(ctx):
         await ctx.send(f"your account balance: {gambling.get(str(ctx.author))}")
         await ctx.send(file=discord.File("media/5moners.jpg"))
     
-@bot.command(brief="‎shows top gambling addicts")
+@bot.command(brief="shows top gambling addicts")
 async def baltop(ctx):
     with open("data/slots.json", "r") as f:
         gambling = json.load(f)
@@ -215,7 +216,7 @@ async def baltop(ctx):
         num += 1
     await ctx.send(embed=embed)
 
-@bot.command(brief="‎bitcoin")
+@bot.command(brief="bitcoin")
 async def freemoney(ctx):
     with open("data/slots.json", "r") as f:
         gambling = json.load(f)
@@ -227,7 +228,7 @@ async def freemoney(ctx):
             json.dump(gambling, balances)
     balances.close()
 
-@bot.command(brief="‎give money to someone else")
+@bot.command(brief="give money to someone else")
 async def give(ctx, amount=1):
     with open("data/slots.json", "r") as f:
         gambling = json.load(f)
@@ -415,5 +416,11 @@ async def id(ctx):
         embed.add_field(name="Roles:", value=str(", ".join(role)), inline=False)
         embed.set_footer(text="ID: "+str(ctx.author.id))
         await ctx.send(embed=embed)
+
+@bot.command(brief="he knows")
+async def ben(ctx):
+    prophecies = ["yes.mp3", "no.mp3", "eugh.mp3", "hohoho.mp3"]
+    knowledge = random.choice(prophecies)
+    await ctx.send(file=discord.File(f"media/{knowledge}"))
 
 bot.run(TOKEN)
